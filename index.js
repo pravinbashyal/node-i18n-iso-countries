@@ -23,13 +23,48 @@ function formatNumericCode(code) {
   return String('000'+(code ? code : '')).slice(-3);
 }
 
-function registerLocale(localeData) {
+function isString(testee) {
+  return typeof testee === 'string'
+}
+
+function isArrayOfStrings (testee) {
+  const invalidLanguageProp = languageOrLanguages.some(language => !isString(language))
+  if(invalidLanguageProp) {
+    throw new TypeError('Invalid parameter for language')
+  }
+}
+
+function validateLocale(locale) {
   if (!localeData.locale) {
     throw new TypeError('Missing localeData.locale');
   }
 
   if (!localeData.countries) {
     throw new TypeError('Missing localeData.countries');
+  }
+  return
+}
+
+function addLocale(locale) {
+    const localeData = require(`./langs/${language.json}`)
+    validateLocale(localeData)
+    registerLocales[localeData.locale] = localeData.countries
+}
+
+function registerLocale(languageOrLanguages) {
+  if(isString(languageOrLanguages)) {
+    const language = languageOrLanguages
+    addLocale(language)
+  }
+  if(Array.isArray(languageOrLanguages)) {
+    if(isArrayOfStrings) {
+      const languages = languageOrLanguages
+      languages.map(language => {
+        addLocale(language)
+      })
+    } else  {
+    throw new TypeError('Invalid parameter for language')
+    }
   }
 
   registeredLocales[localeData.locale] = localeData.countries;
